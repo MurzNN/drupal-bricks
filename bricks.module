@@ -92,7 +92,10 @@ function _bricks_nest_items($element, $items) {
       $items[$delta]['#layout'] = $element['#items'][$delta]->options['layout'];
     }
     if (!empty($element['#items'][$delta]->options['css_class'])) {
-      $items[$delta]['#attributes']['class'][] = $element['#items'][$delta]->options['css_class'];
+      $css_classes = explode(', ', $element['#items'][$delta]->options['css_class']));
+      foreach($css_classes as $css_class) {
+        $items[$delta]['#attributes']['class'][] = $css_class;
+      }
     }
 
     // Disable entity render cache, rely on field cache:
@@ -327,7 +330,7 @@ function _bricks_form_element_alter(&$element, $item, $entity) {
     $element['options']['css_class']['#settings'] = Selectize::settings(
       array(
         'create' => TRUE,
-        'delimiter' => ' ',
+        'delimiter' => ', ',
         'plugins' => array('remove_button', 'drag_drop'),
       )
     );
