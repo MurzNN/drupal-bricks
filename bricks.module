@@ -313,10 +313,18 @@ function _bricks_form_element_alter(&$element, $item, $entity) {
     }
   }
 
+  if(strpos($item->options['css_class'], ', ') !== false) {
+    $default_classes = explode(', ', $item->options['css_class']);
+  } else {
+    $default_classes = explode(' ', $item->options['css_class']);
+  }
+  foreach($default_classes as $value) {
+   $classes_options[$value] = $value;
+  }
+
   $element['options']['css_class'] = [
     '#type' => 'textfield',
-    '#default_value' => !empty($item->options['css_class']) ? $item->options['css_class'] : '',
-    '#options' => $config->get('css_classes'),
+    '#default_value' => !empty($item->options['css_class']) ? implode(', ', $classes_options) : '',
     '#size' => 10,
     '#autocomplete_route_name' => 'bricks.css_autocomplete',
     '#autocomplete_route_parameters' => array('brick_type' => $entity->bundle()),
@@ -327,6 +335,8 @@ function _bricks_form_element_alter(&$element, $item, $entity) {
   
   if(\Drupal::moduleHandler()->moduleExists('selectize')) {
     $element['options']['css_class']['#type'] = 'selectize';
+    $element['options']['css_class']['#multiple'] = true;
+    $element['options']['css_class']['#options'] = array_merge($classes_options, $config->get('css_classes'));
     $element['options']['css_class']['#settings'] = Selectize::settings(
       array(
         'create' => TRUE,
