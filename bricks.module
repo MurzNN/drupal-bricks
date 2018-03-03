@@ -92,7 +92,7 @@ function _bricks_nest_items($element, $items) {
       $items[$delta]['#layout'] = $element['#items'][$delta]->options['layout'];
     }
     if (!empty($element['#items'][$delta]->options['css_class'])) {
-      $css_classes = explode(', ', $element['#items'][$delta]->options['css_class']));
+      $css_classes = explode(', ', $element['#items'][$delta]->options['css_class']);
       foreach($css_classes as $css_class) {
         $items[$delta]['#attributes']['class'][] = $css_class;
       }
