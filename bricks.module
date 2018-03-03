@@ -8,6 +8,7 @@
 use Drupal\Core\Render\Element;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Component\Utility\Html;
+use Drupal\selectize\Element\Selectize;
 
 /* BRICKS STORAGE */
 
@@ -274,6 +275,8 @@ function _bricks_preprocess_tabledrag_form(&$variables, $element_key, $widget, $
  * Helper function for widget's formElement().
  */
 function _bricks_form_element_alter(&$element, $item, $entity) {
+  $config = \Drupal::config('bricks.settings');
+
   $element['depth'] = [
   // @TODO: Other types break the correct indentations.
     '#type' => 'hidden',
@@ -306,14 +309,29 @@ function _bricks_form_element_alter(&$element, $item, $entity) {
       ];
     }
   }
+
   $element['options']['css_class'] = [
     '#type' => 'textfield',
     '#default_value' => !empty($item->options['css_class']) ? $item->options['css_class'] : '',
+    '#options' => $config->get('css_classes'),
     '#size' => 10,
+    '#autocomplete_route_name' => 'bricks.css_autocomplete',
+    '#autocomplete_route_parameters' => array('brick_type' => $entity->bundle()),
     '#attributes' => [
       'placeholder' => t('CSS class(-es)'),
     ],
   ];
+  
+  if(\Drupal::moduleHandler()->moduleExists('selectize')) {
+    $element['options']['css_class']['#type'] = 'selectize';
+    $element['options']['css_class']['#settings'] = Selectize::settings(
+      array(
+        'create' => TRUE,
+        'delimiter' => ' ',
+        'plugins' => array('remove_button', 'drag_drop'),
+      )
+    );
+  }
 }
 
 /* MISC */
